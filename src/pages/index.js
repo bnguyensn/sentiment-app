@@ -1,21 +1,46 @@
-import React from "react"
-import { Link } from "gatsby"
+import React from 'react';
+import Layout from '../components/layout/layout';
+import SEO from '../components/layout/seo';
+import TextInput from '../components/pages/index/text-input';
+import './index.css';
+import Sentiment from '../components/pages/index/sentiment';
+import useQuerySentiment from '../components/pages/index/useQuerySentiment';
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+const parseSentimentQuery = query => {
+  if (query.loading) return 'loading';
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link>
-  </Layout>
-)
+  if (query.error) return 'error';
 
-export default IndexPage
+  if (query.result) {
+    console.dir(query.result);
+
+    const sentiment = query.result.entities?.sentiment;
+
+    if (sentiment) {
+      return sentiment[0].value;
+    }
+
+    return 'unknown';
+  }
+
+  return '';
+};
+
+const IndexPage = () => {
+  const { inputText, setInputText, query } = useQuerySentiment();
+
+  const sentimentText = parseSentimentQuery(query);
+  console.log(sentimentText);
+
+  return (
+    <Layout>
+      <SEO title="Moody" />
+      <div className="index-ctn">
+        <TextInput inputText={inputText} setInputText={setInputText} />
+        <Sentiment sentimentText={sentimentText} />
+      </div>
+    </Layout>
+  );
+};
+
+export default IndexPage;
