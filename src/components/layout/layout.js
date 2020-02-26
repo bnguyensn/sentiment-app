@@ -33,7 +33,14 @@ const Layout = ({ children }) => {
       }}
     >
       <main style={{ flexGrow: 1 }}>{children}</main>
-      <footer style={{ textAlign: 'center' }}>
+      <footer
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          width: '100vw',
+          textAlign: 'center',
+        }}
+      >
         Created by{' '}
         <a href="https://twitter.com/bnguyensn" target="_blank">
           me

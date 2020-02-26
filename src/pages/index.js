@@ -5,39 +5,98 @@ import TextInput from '../components/pages/index/text-input';
 import './index.css';
 import Sentiment from '../components/pages/index/sentiment';
 import useQuerySentiment from '../components/pages/index/useQuerySentiment';
+import clsx from 'clsx';
 
-const parseSentimentQuery = query => {
-  if (query.loading) return 'loading';
-
-  if (query.error) return 'error';
-
-  if (query.result) {
-    console.dir(query.result);
-
-    const sentiment = query.result.entities?.sentiment;
-
-    if (sentiment) {
-      return sentiment[0].value;
-    }
-
-    return 'unknown';
+const createSentimentComponent = (queryState, prevData) => {
+  if (queryState.loading) {
+    return (
+      <Sentiment
+        value="loading"
+        confidence={null}
+        prevConfidence={null}
+        dominant={true}
+      />
+    );
   }
 
-  return '';
+  if (queryState.error) {
+    return (
+      <Sentiment
+        value="error"
+        confidence={null}
+        prevConfidence={null}
+        dominant={true}
+      />
+    );
+  }
+
+  if (queryState.data) {
+    const {
+      positive: positiveConf,
+      neutral: neutralConf,
+      negative: negativeConf,
+    } = queryState.data;
+
+    const {
+      positive: prevPositiveConf,
+      neutral: prevNeutralConf,
+      negative: prevNegativeConf,
+    } = prevData;
+
+    const dominantSentiment = queryState.meta?.dominantSentiment;
+
+    return (
+      <>
+        <Sentiment
+          value="positive"
+          confidence={positiveConf}
+          prevConfidence={prevPositiveConf}
+          dominant={dominantSentiment === 'positive'}
+        />
+        <Sentiment
+          value="neutral"
+          confidence={neutralConf}
+          prevConfidence={prevNeutralConf}
+          dominant={dominantSentiment === 'neutral'}
+        />
+        <Sentiment
+          value="negative"
+          confidence={negativeConf}
+          prevConfidence={prevNegativeConf}
+          dominant={dominantSentiment === 'negative'}
+        />
+      </>
+    );
+  }
+
+  return (
+    <Sentiment
+      value=""
+      confidence={null}
+      prevConfidence={null}
+      dominant={true}
+    />
+  );
 };
 
 const IndexPage = () => {
-  const { inputText, setInputText, query } = useQuerySentiment();
+  const [inputText, setInputText, queryState, prevData] = useQuerySentiment();
 
-  const sentimentText = parseSentimentQuery(query);
-  console.log(sentimentText);
+  const dominantSentiment = queryState.meta?.dominantSentiment;
+
+  const sentimentComponent = createSentimentComponent(queryState, prevData);
 
   return (
     <Layout>
       <SEO title="Moody" />
-      <div className="index-ctn">
+      <div
+        className={clsx(
+          'index-ctn',
+          dominantSentiment && `${dominantSentiment}`,
+        )}
+      >
         <TextInput inputText={inputText} setInputText={setInputText} />
-        <Sentiment sentimentText={sentimentText} />
+        <div className="sentiments-ctn">{sentimentComponent}</div>
       </div>
     </Layout>
   );

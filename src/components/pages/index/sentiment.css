@@ -1,7 +1,32 @@
 .sentiment-ctn {
-  margin: 2rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  margin: 1rem;
 }
 
 .sentiment-emoji {
-  font-size: 4rem;
+  margin-bottom: 2rem;
+  font-size: 3rem;
+}
+
+.sentiment-emoji.small {
+  font-size: 2rem;
+}
+
+.sentiment-confidence {
+  margin-bottom: .5rem;
+}
+
+.sentiment-confidence-change {
+  font-size: 1rem;
+}
+
+.sentiment-confidence-change.red {
+  color: #b71c1c;
+}
+
+.sentiment-confidence-change.green {
+  color: #1B5E20;
 }

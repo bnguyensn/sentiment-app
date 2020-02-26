@@ -4,7 +4,7 @@ import './text-input.css';
 const TextInput = ({ inputText, setInputText }) => {
   return (
     <div className="main-input-ctn">
-      <label htmlFor="main-input">How are you feeling today?</label>
+      <label htmlFor="main-input">Type something here:</label>
       <input
         type="text"
         id="main-input"

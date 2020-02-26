@@ -212,6 +212,9 @@ body {
   -webkit-font-feature-settings: "kern", "liga", "clig", "calt";
   font-feature-settings: "kern", "liga", "clig", "calt";
 }
+input {
+  color: inherit;
+}
 img {
   max-width: 100%;
   margin-left: 0;

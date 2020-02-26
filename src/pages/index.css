@@ -6,5 +6,25 @@
 
   height: 100%;
 
+  transition: background-color 1s;
+}
 
+.index-ctn.positive {
+  background-color: #C8E6C9;
+}
+
+.index-ctn.neutral {
+  background-color: #FFF9C4;
+}
+
+.index-ctn.negative {
+  background-color: #ffcdd2;
+}
+
+.sentiments-ctn {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 1rem;
+  height: 6rem;
 }

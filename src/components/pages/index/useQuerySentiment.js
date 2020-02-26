@@ -1,7 +1,18 @@
-import { useState } from 'react';
-import useConstant from 'use-constant';
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
-import { useAsync } from 'react-async-hook';
+import { useEffect, useState } from 'react';
+import useDebounce from './useDebounce';
+
+const MAX_MESSAGE_LENGTH = 255;
+
+const trimMessage = message =>
+  message.length > 255 ? message.slice(0, MAX_MESSAGE_LENGTH - 1) : message;
+
+const findDominantSentiment = sentiments => {
+  const sortedSentiments = [...sentiments].sort((sentimentA, sentimentB) => {
+    return sentimentB.confidence - sentimentA.confidence;
+  });
+
+  return sortedSentiments[0].value;
+};
 
 const querySentiment = async message => {
   const baseUrl = 'https://api.wit.ai/message';
@@ -11,10 +22,14 @@ const querySentiment = async message => {
     reference_time: new Date(Date.now()).toISOString(),
   };
 
-  const encodedMessage = encodeURIComponent(message);
+  const encodedMessage = encodeURIComponent(trimMessage(message));
   const encodedContext = encodeURIComponent(JSON.stringify(context));
 
-  const url = `${baseUrl}?q=${encodedMessage}&context=${encodedContext}`;
+  const url =
+    `${baseUrl}?` +
+    `q=${encodedMessage}` +
+    `&context=${encodedContext}` +
+    `&n=3`;
   const opts = {
     headers: {
       Authorization: `Bearer ${publicToken}`,
@@ -28,29 +43,94 @@ const querySentiment = async message => {
     throw new Error('Network error');
   }
 
-  return res.json();
+  const data = await res.json();
+  const sentiments = data.entities?.sentiment;
+
+  if (!sentiments || (Array.isArray(sentiments) && sentiments.length < 3)) {
+    throw new Error('Not enough sentiments received');
+  }
+
+  const sentimentConfidence = {};
+  const sentimentMeta = {
+    dominantSentiment: findDominantSentiment(sentiments),
+  };
+  sentiments.forEach(
+    sentiment => (sentimentConfidence[sentiment.value] = sentiment.confidence),
+  );
+
+  return { sentimentConfidence, sentimentMeta };
 };
 
 const useQuerySentiment = () => {
   const [inputText, setInputText] = useState('');
+  const [queryState, setQueryState] = useState({
+    loading: false,
+    error: undefined,
+    data: undefined,
+    meta: undefined,
+  });
+  const [prevData, setPrevData] = useState({
+    positive: 0,
+    neutral: 0,
+    negative: 0,
+  });
 
-  const debouncedQuery = useConstant(() =>
-    AwesomeDebouncePromise(querySentiment, 1000),
-  );
+  const debouncedInputText = useDebounce(inputText, 500);
 
-  const query = useAsync(async () => {
-    if (inputText.length === 0 || inputText.length > 255) {
-      return undefined;
+  useEffect(() => {
+    if (
+      debouncedInputText.length > 0 &&
+      debouncedInputText.length <= MAX_MESSAGE_LENGTH
+    ) {
+      const executor = async () => {
+        setQueryState({
+          loading: true,
+          error: undefined,
+          data: undefined,
+          meta: queryState.meta,
+        });
+
+        try {
+          const { sentimentConfidence, sentimentMeta } = await querySentiment(
+            debouncedInputText,
+          );
+
+          if (queryState.data) setPrevData(queryState.data);
+
+          setQueryState({
+            loading: false,
+            error: undefined,
+            data: sentimentConfidence,
+            meta: sentimentMeta,
+          });
+        } catch (err) {
+          setQueryState({
+            loading: false,
+            error: err.message,
+            data: undefined,
+            meta: undefined,
+          });
+        }
+      };
+
+      executor();
     } else {
-      return debouncedQuery(inputText);
-    }
-  }, [inputText]);
+      setQueryState({
+        loading: false,
+        error: undefined,
+        data: undefined,
+        meta: undefined,
+      });
 
-  return {
-    inputText,
-    setInputText,
-    query,
-  };
+      setPrevData({
+        positive: 0,
+        neutral: 0,
+        negative: 0,
+      });
+    }
+  }, [debouncedInputText]);
+
+  return [inputText, setInputText, queryState, prevData];
 };
 
 export default useQuerySentiment;
