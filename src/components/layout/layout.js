@@ -29,6 +29,7 @@ const Layout = ({ children }) => {
         flexDirection: 'column',
         width: '100vw',
         height: '100vh',
+        minHeight: '-webkit-fill-available',
         overflow: 'hidden',
       }}
     >
