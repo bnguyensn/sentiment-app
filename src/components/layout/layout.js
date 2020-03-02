@@ -25,11 +25,13 @@ const Layout = ({ children }) => {
   return (
     <div
       style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         display: 'flex',
         flexDirection: 'column',
-        width: '100vw',
-        height: '100vh',
-        minHeight: '-webkit-fill-available',
         overflow: 'hidden',
       }}
     >
@@ -38,12 +40,16 @@ const Layout = ({ children }) => {
         style={{
           position: 'fixed',
           bottom: 0,
-          width: '100vw',
+          width: '100%',
           textAlign: 'center',
         }}
       >
         Created by{' '}
-        <a href="https://twitter.com/bnguyensn" target="_blank">
+        <a
+          href="https://twitter.com/bnguyensn"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           me
         </a>
         !

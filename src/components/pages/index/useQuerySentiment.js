@@ -75,7 +75,7 @@ const useQuerySentiment = () => {
     negative: 0,
   });
 
-  const debouncedInputText = useDebounce(inputText, 500);
+  const debouncedInputText = useDebounce(inputText, 750);
 
   useEffect(() => {
     if (
