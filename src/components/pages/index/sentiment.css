@@ -7,7 +7,10 @@
 }
 
 .sentiment-emoji {
+  display: flex;
+  align-items: center;
   margin-bottom: 2rem;
+  height: 4rem;
   font-size: 3rem;
 }
 
