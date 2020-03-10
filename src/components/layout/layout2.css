@@ -4,12 +4,15 @@ html {
   font-family: 'Roboto', sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   font-family: 'Roboto', sans-serif;
   font-size: 24px;
   margin: 0;
+  padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -34,9 +37,13 @@ button, input, optgroup, select, textarea {
 }
 
 footer {
-  font-size: .75rem;
+  font-size: 1rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
+}
+
+a {
+  text-decoration: none;
 }

@@ -29,28 +29,40 @@ const Layout = ({ children }) => {
         flexDirection: 'column',
       }}
     >
-      <main style={{}}>{children}</main>
-      <footer
-        style={{
-          display: 'none',
-          position: 'fixed',
-          bottom: 0,
-          width: '100%',
-          textAlign: 'center',
-          color: '#fff',
-          backgroundColor: '#212121',
-        }}
-      >
-        Created by{' '}
-        <a
-          href="https://twitter.com/bnguyensn"
-          target="_blank"
-          rel="noopener noreferrer"
+      <main style={{}}>
+        {children}
+        <footer
+          style={{
+            margin: '.5rem',
+            padding: '.5rem',
+            textAlign: 'center',
+            color: 'inherit',
+          }}
         >
-          me
-        </a>
-        !
-      </footer>
+          <p>
+            Made with 🥰 by{' '}
+            <a
+              href="https://twitter.com/bnguyensn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <b>Binh Nguyen</b>
+            </a>{' '}
+            and <b>Alvin Wang</b> | {`${new Date(Date.now()).getFullYear()}`}
+          </p>
+          <p>
+            Source code is on{' '}
+            <a
+              href="https://github.com/bnguyensn/sentiment-app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          </p>
+          <p></p>
+        </footer>
+      </main>
     </div>
   );
 };
