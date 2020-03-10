@@ -2,7 +2,13 @@ import React from 'react';
 import './sentiment.css';
 import clsx from 'clsx';
 
-const Sentiment = ({ value, confidence, prevConfidence, dominant }) => {
+const Sentiment = ({
+  value,
+  confidence,
+  prevConfidence,
+  dominant,
+  confidenceIsPercentage,
+}) => {
   let sentimentEmoji;
 
   switch (value) {
@@ -25,9 +31,16 @@ const Sentiment = ({ value, confidence, prevConfidence, dominant }) => {
       sentimentEmoji = '😶';
   }
 
+  const percentageModifier = confidenceIsPercentage ? 100 : 1;
+  const percentageSuffix = confidenceIsPercentage ? '%' : '';
+
   const confidenceChange =
-    confidence !== null && prevConfidence !== null
-      ? (confidence - prevConfidence) * 100
+    confidence !== null &&
+    prevConfidence !== null &&
+    !Number.isNaN(confidence) &&
+    !Number.isNaN(prevConfidence) &&
+    typeof prevConfidence !== 'object'
+      ? (confidence - prevConfidence) * percentageModifier
       : null;
 
   return (
@@ -38,7 +51,9 @@ const Sentiment = ({ value, confidence, prevConfidence, dominant }) => {
       {confidence !== null && (
         <>
           <div className="sentiment-confidence">
-            {`${Number.parseFloat(`${confidence * 100}`).toFixed(2)}%`}
+            {`${Number.parseFloat(`${confidence * percentageModifier}`).toFixed(
+              2,
+            )}${percentageSuffix}`}
           </div>
           {confidenceChange !== null && (
             <div
@@ -49,7 +64,7 @@ const Sentiment = ({ value, confidence, prevConfidence, dominant }) => {
             >
               {`${confidenceChange >= 0 ? '+' : ''}${Number.parseFloat(
                 `${confidenceChange}`,
-              ).toFixed(2)}%`}
+              ).toFixed(2)}${percentageSuffix}`}
             </div>
           )}
         </>

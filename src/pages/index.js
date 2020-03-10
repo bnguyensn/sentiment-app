@@ -4,11 +4,27 @@ import SEO from '../components/layout/seo';
 import TextInput from '../components/pages/index/text-input';
 import Sentiment from '../components/pages/index/sentiment';
 import useQuerySentiment from '../components/pages/index/useQuerySentiment';
-import clsx from 'clsx';
 import ModelSelection from '../components/pages/index/model-selection';
 import './index.css';
+import Description from '../components/pages/index/description';
 
-const createSentimentComponent = (queryState, prevData) => {
+const createSentimentComponent = (
+  queryState,
+  prevData,
+  selectedModel,
+  inputText,
+) => {
+  if (!inputText) {
+    return (
+      <Sentiment
+        value=""
+        confidence={null}
+        prevConfidence={null}
+        dominant={true}
+      />
+    );
+  }
+
   if (queryState.loading) {
     return (
       <Sentiment
@@ -32,42 +48,67 @@ const createSentimentComponent = (queryState, prevData) => {
   }
 
   if (queryState.data) {
-    const {
-      positive: positiveConf,
-      neutral: neutralConf,
-      negative: negativeConf,
-    } = queryState.data;
+    // Depending on the selected model, data can be of different shapes
 
-    const {
-      positive: prevPositiveConf,
-      neutral: prevNeutralConf,
-      negative: prevNegativeConf,
-    } = prevData;
+    if (selectedModel === 'facebook') {
+      const {
+        positive: positiveConf,
+        neutral: neutralConf,
+        negative: negativeConf,
+      } = queryState.data;
 
-    const dominantSentiment = queryState.meta?.dominantSentiment;
+      const {
+        positive: prevPositiveConf,
+        neutral: prevNeutralConf,
+        negative: prevNegativeConf,
+      } = prevData;
 
-    return (
-      <>
+      const dominantSentiment = queryState.meta?.dominantSentiment;
+
+      return (
+        <>
+          <Sentiment
+            value="positive"
+            confidence={positiveConf}
+            prevConfidence={prevPositiveConf}
+            dominant={dominantSentiment === 'positive'}
+            confidenceIsPercentage
+          />
+          <Sentiment
+            value="neutral"
+            confidence={neutralConf}
+            prevConfidence={prevNeutralConf}
+            dominant={dominantSentiment === 'neutral'}
+            confidenceIsPercentage
+          />
+          <Sentiment
+            value="negative"
+            confidence={negativeConf}
+            prevConfidence={prevNegativeConf}
+            dominant={dominantSentiment === 'negative'}
+            confidenceIsPercentage
+          />
+        </>
+      );
+    } else if (selectedModel === 'alvin') {
+      const sentimentScore = queryState.data;
+
+      const sentimentValue =
+        sentimentScore > 2
+          ? 'positive'
+          : sentimentScore < -2
+          ? 'negative'
+          : 'neutral';
+
+      return (
         <Sentiment
-          value="positive"
-          confidence={positiveConf}
-          prevConfidence={prevPositiveConf}
-          dominant={dominantSentiment === 'positive'}
+          value={sentimentValue}
+          confidence={sentimentScore}
+          prevConfidence={prevData}
+          dominant
         />
-        <Sentiment
-          value="neutral"
-          confidence={neutralConf}
-          prevConfidence={prevNeutralConf}
-          dominant={dominantSentiment === 'neutral'}
-        />
-        <Sentiment
-          value="negative"
-          confidence={negativeConf}
-          prevConfidence={prevNegativeConf}
-          dominant={dominantSentiment === 'negative'}
-        />
-      </>
-    );
+      );
+    }
   }
 
   return (
@@ -82,23 +123,35 @@ const createSentimentComponent = (queryState, prevData) => {
 
 const IndexPage = () => {
   const [selectedModel, setSelectedModel] = useState('facebook');
-  const [inputText, setInputText, queryState, prevData] = useQuerySentiment();
+  const [inputText, setInputText, queryState, prevData] = useQuerySentiment(
+    selectedModel,
+  );
 
-  const dominantSentiment = queryState.meta?.dominantSentiment;
+  // const dominantSentiment = queryState.meta?.dominantSentiment;
 
-  const sentimentComponent = createSentimentComponent(queryState, prevData);
+  const sentimentComponent = createSentimentComponent(
+    queryState,
+    prevData,
+    selectedModel,
+    inputText,
+  );
 
   return (
     <Layout>
       <SEO title="Moody" />
       <div className={'index-ctn'}>
-        <h1 className="index-title">MOODY</h1>
+        <div className="index-title-block">
+          <h1 className="index-title">MOODY</h1>
+          <h2 className="index-subtitle">SENTIMENT ANALYSIS</h2>
+        </div>
         <ModelSelection
           selectedModel={selectedModel}
           setSelectedModel={setSelectedModel}
+          setInputText={setInputText}
         />
         <TextInput inputText={inputText} setInputText={setInputText} />
         <div className="sentiments-ctn">{sentimentComponent}</div>
+        <Description selectedModel={selectedModel} />
       </div>
     </Layout>
   );

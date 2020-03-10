@@ -1,0 +1,9 @@
+{
+  "alvin": {
+    "baseUrl": "http://46.101.27.83/message"
+  },
+  "facebook": {
+    "baseUrl": "https://api.wit.ai/message",
+    "publicToken": "R6WFRGFPWN7DOYNVAX2Z53RWTZYKOK4D"
+  }
+}

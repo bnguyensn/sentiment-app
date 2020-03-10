@@ -14,54 +14,79 @@ const findDominantSentiment = sentiments => {
   return sortedSentiments[0].value;
 };
 
-const querySentiment = async message => {
-  const baseUrl = 'https://api.wit.ai/message';
-  const publicToken = 'R6WFRGFPWN7DOYNVAX2Z53RWTZYKOK4D';
+const querySentiment = async (message, model) => {
+  if (model === 'facebook') {
+    const baseUrl = 'https://api.wit.ai/message';
+    const publicToken = 'R6WFRGFPWN7DOYNVAX2Z53RWTZYKOK4D';
 
-  const context = {
-    reference_time: new Date(Date.now()).toISOString(),
-  };
+    const context = {
+      reference_time: new Date(Date.now()).toISOString(),
+    };
 
-  const encodedMessage = encodeURIComponent(trimMessage(message));
-  const encodedContext = encodeURIComponent(JSON.stringify(context));
+    const encodedMessage = encodeURIComponent(trimMessage(message));
+    const encodedContext = encodeURIComponent(JSON.stringify(context));
 
-  const url =
-    `${baseUrl}?` +
-    `q=${encodedMessage}` +
-    `&context=${encodedContext}` +
-    `&n=3`;
-  const opts = {
-    headers: {
-      Authorization: `Bearer ${publicToken}`,
-      Accept: 'application/json',
-    },
-  };
+    const url =
+      `${baseUrl}?` +
+      `q=${encodedMessage}` +
+      `&context=${encodedContext}` +
+      `&n=3`;
+    const opts = {
+      headers: {
+        Authorization: `Bearer ${publicToken}`,
+        Accept: 'application/json',
+      },
+    };
 
-  const res = await fetch(url, opts);
+    const res = await fetch(url, opts);
 
-  if (!res.ok) {
-    throw new Error('Network error');
+    if (!res.ok) {
+      throw new Error('Network error');
+    }
+
+    const data = await res.json();
+    const sentiments = data.entities?.sentiment;
+
+    if (!sentiments || (Array.isArray(sentiments) && sentiments.length < 3)) {
+      throw new Error('Not enough sentiments received');
+    }
+
+    const sentimentConfidence = {};
+    const sentimentMeta = {
+      dominantSentiment: findDominantSentiment(sentiments),
+    };
+    sentiments.forEach(
+      sentiment =>
+        (sentimentConfidence[sentiment.value] = sentiment.confidence),
+    );
+
+    return { sentimentConfidence, sentimentMeta };
+  } else if (model === 'alvin') {
+    const baseUrl = 'http://46.101.27.83/message';
+
+    const encodedMessage = encodeURIComponent(trimMessage(message));
+
+    const url = `${baseUrl}?` + `m=${encodedMessage}`;
+    const opts = {
+      headers: {
+        Accept: 'application/json',
+      },
+    };
+
+    const res = await fetch(url, opts);
+
+    if (!res.ok) {
+      throw new Error('Network error');
+    }
+
+    const data = await res.json();
+
+    // Alvin's model scoring scale runs from negative to positive
+    return { sentimentConfidence: data.data[1], sentimentMeta: null };
   }
-
-  const data = await res.json();
-  const sentiments = data.entities?.sentiment;
-
-  if (!sentiments || (Array.isArray(sentiments) && sentiments.length < 3)) {
-    throw new Error('Not enough sentiments received');
-  }
-
-  const sentimentConfidence = {};
-  const sentimentMeta = {
-    dominantSentiment: findDominantSentiment(sentiments),
-  };
-  sentiments.forEach(
-    sentiment => (sentimentConfidence[sentiment.value] = sentiment.confidence),
-  );
-
-  return { sentimentConfidence, sentimentMeta };
 };
 
-const useQuerySentiment = () => {
+const useQuerySentiment = model => {
   const [inputText, setInputText] = useState('');
   const [queryState, setQueryState] = useState({
     loading: false,
@@ -93,6 +118,7 @@ const useQuerySentiment = () => {
         try {
           const { sentimentConfidence, sentimentMeta } = await querySentiment(
             debouncedInputText,
+            model,
           );
 
           if (queryState.data) setPrevData(queryState.data);

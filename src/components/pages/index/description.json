@@ -1,0 +1,10 @@
+{
+  "alvin": {
+    "summary": "Alvin's model ranks a sentence's sentiment on a scale from negative (bad) to positive (good).",
+    "training": "The model was trained using 1.6 million Twitter tweets provided by Sentiment140."
+  },
+  "facebook": {
+    "summary": "Facebook wit.ai division's model ranks a sentence's sentiment on 3 scales: positive, neutral, and negative. The model assigns a value from 0 to 1 for each of these scale.",
+    "training": "The model was trained with sophisticated methods from Facebook. The model can be continuously trained by feeding it with new data."
+  }
+}

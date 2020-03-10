@@ -25,23 +25,20 @@ const Layout = ({ children }) => {
   return (
     <div
       style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden',
       }}
     >
-      <main style={{ flexGrow: 1 }}>{children}</main>
+      <main style={{}}>{children}</main>
       <footer
         style={{
+          display: 'none',
           position: 'fixed',
           bottom: 0,
           width: '100%',
           textAlign: 'center',
+          color: '#fff',
+          backgroundColor: '#212121',
         }}
       >
         Created by{' '}

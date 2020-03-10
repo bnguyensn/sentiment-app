@@ -16,10 +16,11 @@ const getModelLogoSrc = selectedModel => {
   };
 };
 
-const ModelSelection = ({ selectedModel, setSelectedModel }) => {
+const ModelSelection = ({ selectedModel, setSelectedModel, setInputText }) => {
   const { webpSrc, normalSrc } = getModelLogoSrc(selectedModel);
 
   const handleSelectModel = e => {
+    setInputText('');
     setSelectedModel(e.target.value);
   };
 
@@ -32,7 +33,10 @@ const ModelSelection = ({ selectedModel, setSelectedModel }) => {
         </picture>
       </div>
       <div className="model-selection-input-ctn">
-        <label className="model-selection-input-ctn-label" for="model-select">
+        <label
+          className="model-selection-input-ctn-label"
+          htmlFor="model-select"
+        >
           Choose a model:
         </label>
         <select
