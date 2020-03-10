@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/layout/layout';
 import SEO from '../components/layout/seo';
 import TextInput from '../components/pages/index/text-input';
-import './index.css';
 import Sentiment from '../components/pages/index/sentiment';
 import useQuerySentiment from '../components/pages/index/useQuerySentiment';
 import clsx from 'clsx';
+import ModelSelection from '../components/pages/index/model-selection';
+import './index.css';
 
 const createSentimentComponent = (queryState, prevData) => {
   if (queryState.loading) {
@@ -80,6 +81,7 @@ const createSentimentComponent = (queryState, prevData) => {
 };
 
 const IndexPage = () => {
+  const [selectedModel, setSelectedModel] = useState('facebook');
   const [inputText, setInputText, queryState, prevData] = useQuerySentiment();
 
   const dominantSentiment = queryState.meta?.dominantSentiment;
@@ -89,12 +91,12 @@ const IndexPage = () => {
   return (
     <Layout>
       <SEO title="Moody" />
-      <div
-        className={clsx(
-          'index-ctn',
-          dominantSentiment && `${dominantSentiment}`,
-        )}
-      >
+      <div className={'index-ctn'}>
+        <h1 className="index-title">MOODY</h1>
+        <ModelSelection
+          selectedModel={selectedModel}
+          setSelectedModel={setSelectedModel}
+        />
         <TextInput inputText={inputText} setInputText={setInputText} />
         <div className="sentiments-ctn">{sentimentComponent}</div>
       </div>
