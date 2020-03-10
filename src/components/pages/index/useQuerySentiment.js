@@ -62,7 +62,7 @@ const querySentiment = async (message, model) => {
 
     return { sentimentConfidence, sentimentMeta };
   } else if (model === 'alvin') {
-    const baseUrl = 'http://46.101.27.83/message';
+    const baseUrl = 'https://moody.bnguyensn.com/message';
 
     const encodedMessage = encodeURIComponent(trimMessage(message));
 
