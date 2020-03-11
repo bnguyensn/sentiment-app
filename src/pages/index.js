@@ -138,11 +138,11 @@ const IndexPage = () => {
 
   return (
     <Layout>
-      <SEO title="Moody" />
+      <SEO title="Sentence Sentiment" />
       <div className={'index-ctn'}>
         <div className="index-title-block">
           <h1 className="index-title">MOODY</h1>
-          <h2 className="index-subtitle">SENTIMENT ANALYSIS</h2>
+          <h2 className="index-subtitle">SENTENCE SENTIMENT</h2>
         </div>
         <ModelSelection
           selectedModel={selectedModel}
