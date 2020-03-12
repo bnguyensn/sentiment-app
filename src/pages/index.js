@@ -7,6 +7,7 @@ import useQuerySentiment from '../components/pages/index/useQuerySentiment';
 import ModelSelection from '../components/pages/index/model-selection';
 import './index.css';
 import Description from '../components/pages/index/description';
+import LinkButton from '../components/common/link-button';
 
 const createSentimentComponent = (
   queryState,
@@ -140,6 +141,7 @@ const IndexPage = () => {
     <Layout>
       <SEO title="Sentence Sentiment" />
       <div className={'index-ctn'}>
+        <LinkButton to="/news">N</LinkButton>
         <div className="index-title-block">
           <h1 className="index-title">MOODY</h1>
           <h2 className="index-subtitle">SENTENCE SENTIMENT</h2>

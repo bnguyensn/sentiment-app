@@ -5,6 +5,7 @@ import './news.css';
 import TopicSelection from '../components/pages/news/topic-selection';
 import Chart, { DATA_STATES } from '../components/pages/news/chart';
 import Description from '../components/pages/news/description';
+import LinkButton from '../components/common/link-button';
 
 const NewsAnalysisPage = () => {
   const [selectedTopic, setSelectedTopic] = useState('stock-market');
@@ -15,6 +16,7 @@ const NewsAnalysisPage = () => {
     <Layout>
       <SEO title="News Sentiment" />
       <div className={'news-ctn'}>
+        <LinkButton to="/">S</LinkButton>
         <div className="news-title-block">
           <h1 className="news-title">MOODY</h1>
           <h2 className="news-subtitle">NEWS SENTIMENT</h2>
