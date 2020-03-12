@@ -4,7 +4,9 @@
  * See: https://www.gatsbyjs.org/docs/node-apis/
  */
 
-// You can delete this file if you're not using it
+// Gatsby seems to be using core-js < 3, which is not supported. The code blocks
+// below attempt to fix build issues stemming from this.
+// https://github.com/gatsbyjs/gatsby/issues/15601#issuecomment-585431406
 const enableCoreJs3 = config => {
   const coreJs2config = config.resolve.alias['core-js'];
   delete config.resolve.alias['core-js'];

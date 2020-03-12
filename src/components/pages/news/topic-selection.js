@@ -1,9 +1,18 @@
 import React from 'react';
 import './topic-selection.css';
+import { DATA_STATES } from './chart';
 
-const TopicSelection = ({ selectedTopic, setSelectedTopic }) => {
+const TopicSelection = ({
+  selectedTopic,
+  setSelectedTopic,
+  setData,
+  dataState,
+  setDataState,
+}) => {
   const handleSelectTopic = e => {
     setSelectedTopic(e.target.value);
+    setData(null);
+    setDataState(DATA_STATES.NO_DATA);
   };
 
   return (
@@ -21,6 +30,7 @@ const TopicSelection = ({ selectedTopic, setSelectedTopic }) => {
           id="topic-select"
           value={selectedTopic}
           onChange={handleSelectTopic}
+          disabled={dataState === DATA_STATES.LOADING_DATA}
         >
           <option value="stock-market">Stock market</option>
           <option value="tech">Technology</option>
